@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:marketly/config/palette.dart';
-import 'package:marketly/data/data.dart';
-import 'package:marketly/models/models.dart';
+import 'package:marketly/item/item.dart';
 import 'package:marketly/widgets/widgets.dart';
+
+const String groceryBoxName = 'grocery';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -10,12 +12,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final TrackingScrollController _trackingScrollController =
-  TrackingScrollController();
+
+  Box<Item> groceryBox;
+
+  final TrackingScrollController _trackingScrollController = TrackingScrollController();
+
+  @override
+  void initState() {
+    // openBox();
+    super.initState();
+  }
 
   @override
   void dispose() {
     _trackingScrollController.dispose();
+    Hive.close();
     super.dispose();
   }
 
@@ -31,6 +42,13 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  // Future openBox() async {
+    // final directory = await getApplicationDocumentsDirectory();
+    // Hive.init(directory.path);
+    // Hive.openBox<Grocery>(groceryBoxName);
+  //   return;
+  // }
 }
 
 class _HomeScreenMobile extends StatelessWidget {
@@ -43,34 +61,49 @@ class _HomeScreenMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      controller: scrollController,
-      slivers: [
-        SliverAppBar(
-          brightness: Brightness.light,
-          backgroundColor: Colors.white,
-          title: Text(
-            'Grocery list',
-            style: const TextStyle(
-              color: Palette.primary,
-              fontSize: 28.0,
-              fontWeight: FontWeight.bold,
-              letterSpacing: -1.2,
-            ),
-          ),
-          centerTitle: false,
-          floating: true,
+    Widget someOtherSliver = SliverAppBar(
+      brightness: Brightness.light,
+      backgroundColor: Colors.white,
+      title: Text(
+        'Grocery list',
+        style: const TextStyle(
+          color: Palette.primary,
+          fontSize: 28.0,
+          fontWeight: FontWeight.bold,
+          letterSpacing: -1.2,
         ),
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-                (context, index) {
-              final Grocery grocery = groceryList[index];
-              return GroceryListContainer(grocery: grocery);
+      ),
+      centerTitle: false,
+      floating: true,
+    );
+
+    return FutureBuilder<Box<Item>>(
+      future: Hive.openBox('grocery'),
+      builder: (context, snapshot) {
+        print('-----------snapshot--------------');
+        print(snapshot.hasData);
+        Widget newsListSliver;
+
+        if (snapshot.hasData) {
+          newsListSliver = SliverList(
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final Item grocery = snapshot.data.get(index);
+              return GroceryListContainer(item: grocery);
             },
-            childCount: groceryList.length,
-          ),
-        ),
-      ],
+              childCount: snapshot.data.length,
+            ),
+          );
+        } else {
+          newsListSliver = SliverToBoxAdapter(child: CircularProgressIndicator(),);
+        }
+
+        return CustomScrollView(
+          slivers: <Widget>[
+            someOtherSliver,
+            newsListSliver
+          ],
+        );
+      },
     );
   }
 }

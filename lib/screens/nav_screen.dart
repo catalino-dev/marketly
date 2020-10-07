@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:marketly/screens/item_screen.dart';
 import 'package:marketly/screens/screens.dart';
+import 'package:marketly/widgets/bottom-bar.dart';
 import 'package:marketly/widgets/widgets.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -47,6 +49,27 @@ class _NavScreenState extends State<NavScreen> {
           index: _selectedIndex,
           children: _screens,
         ),
+        floatingActionButton: RawMaterialButton(
+          padding: EdgeInsets.all(15.0),
+          shape: CircleBorder(),
+          elevation: 2.0,
+          fillColor: Colors.black,
+          child: Icon(
+            Icons.add_shopping_cart,
+            color: Colors.white,
+            size: 30.0,
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ItemScreen(),
+              ),
+            );
+          },
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: BottomBar(),
       ),
     );
   }

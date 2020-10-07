@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:marketly/models/models.dart';
+import 'package:marketly/item/item.dart';
 import 'package:marketly/widgets/widgets.dart';
 
 class GroceryListContainer extends StatelessWidget {
-  final Grocery grocery;
+  final Item item;
 
   const GroceryListContainer({
     Key key,
-    @required this.grocery,
+    @required this.item,
   }) : super(key: key);
 
   @override
@@ -32,9 +32,9 @@ class GroceryListContainer extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _GroceryHeader(grocery: grocery),
+                  _GroceryHeader(item: item),
                   const SizedBox(height: 4.0),
-                  Text(grocery.description),
+                  Text(item.description),
                   const SizedBox(height: 6.0),
                 ],
               ),
@@ -47,11 +47,11 @@ class GroceryListContainer extends StatelessWidget {
 }
 
 class _GroceryHeader extends StatelessWidget {
-  final Grocery grocery;
+  final Item item;
 
   const _GroceryHeader({
     Key key,
-    @required this.grocery,
+    @required this.item,
   }) : super(key: key);
 
   @override
@@ -59,7 +59,7 @@ class _GroceryHeader extends StatelessWidget {
     return Row(
       children: [
         Text(
-          grocery.itemName,
+          item.name,
           style: const TextStyle(
             fontWeight: FontWeight.w600,
           ),
