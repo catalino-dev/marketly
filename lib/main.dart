@@ -6,16 +6,18 @@ import 'package:marketly/item/item_model.dart';
 import 'package:marketly/screens/screens.dart';
 import 'package:path_provider/path_provider.dart';
 
-const String categoryBoxName = 'categories';
+const String categoriesBoxName = 'categories';
 const String cartBoxName = 'cart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final directory = await getApplicationDocumentsDirectory();
   Hive.init(directory.path);
+
   Hive.registerAdapter(CategoryAdapter());
+  Hive.openBox<Category>(categoriesBoxName);
+
   Hive.registerAdapter(ItemAdapter());
-  Hive.openBox<Category>(categoryBoxName);
   Hive.openBox<Item>(cartBoxName);
   runApp(MarketlyApp());
 }

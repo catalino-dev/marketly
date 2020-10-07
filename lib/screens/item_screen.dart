@@ -3,8 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:marketly/item/item_model.dart';
 
-const String cartBoxName = 'cart';
-
 class ItemScreen extends StatefulWidget {
   ItemScreen();
 
@@ -13,6 +11,7 @@ class ItemScreen extends StatefulWidget {
 }
 
 class _ItemScreenState extends State<ItemScreen> {
+  final String cartBoxName = 'cart';
 
   Box<Item> cart;
 
@@ -157,7 +156,7 @@ class _ItemScreenState extends State<ItemScreen> {
                 ],
               ),
               Container(
-                height: 400.0,
+                height: 500.0,
                 transform: Matrix4.translationValues(0.0, -20.0, 0.0),
                 decoration: BoxDecoration(
                   color: Colors.white,

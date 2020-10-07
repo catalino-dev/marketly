@@ -14,6 +14,6 @@ class Item {
 
   const Item({
     @required this.name,
-    @required this.description,
+    this.description,
   });
 }
