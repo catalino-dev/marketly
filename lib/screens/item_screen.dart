@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
-import 'package:marketly/item/item_model.dart';
+import 'package:marketly/models/item_model.dart';
+import 'package:marketly/models/models.dart';
 
 class ItemScreen extends StatefulWidget {
   ItemScreen();
@@ -13,7 +14,7 @@ class ItemScreen extends StatefulWidget {
 class _ItemScreenState extends State<ItemScreen> {
   final String cartBoxName = 'cart';
 
-  Box<Item> cart;
+  Box<GroceryItems> cart;
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
@@ -21,12 +22,11 @@ class _ItemScreenState extends State<ItemScreen> {
   @override
   void initState() {
     super.initState();
-    cart = Hive.box<Item>(cartBoxName);
+    cart = Hive.box<GroceryItems>(cartBoxName);
   }
 
   @override
   Widget build(BuildContext context) {
-
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -144,8 +144,11 @@ class _ItemScreenState extends State<ItemScreen> {
                             final String name = nameController.text;
                             final String description = descriptionController.text;
 
+
                             Item item = Item(name: name, description: description);
-                            cart.add(item);
+                            cart.get(0).items.add(item);
+                            GroceryItems gi = GroceryItems(category: 'Default', items: [item]);
+                            cart.add(gi);
                             print('---------------Adding the item');
                             print(item);
                           },

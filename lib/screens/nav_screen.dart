@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:marketly/screens/item_screen.dart';
 import 'package:marketly/screens/screens.dart';
-import 'package:marketly/widgets/bottom-bar.dart';
 import 'package:marketly/widgets/widgets.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class NavScreen extends StatefulWidget {
   @override
@@ -12,20 +9,10 @@ class NavScreen extends StatefulWidget {
 
 class _NavScreenState extends State<NavScreen> {
   final List<Widget> _screens = [
-    HomeScreen(),
-    Scaffold(),
-    Scaffold(),
-    Scaffold(),
-    Scaffold(),
-    Scaffold(),
+    HomeScreen()
   ];
   final List<IconData> _icons = const [
-    Icons.home,
-    Icons.ondemand_video,
-    MdiIcons.accountCircleOutline,
-    MdiIcons.accountGroupOutline,
-    MdiIcons.bellOutline,
-    Icons.menu,
+    Icons.home
   ];
   int _selectedIndex = 0;
 

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:marketly/category/category.dart';
 import 'package:marketly/config/palette.dart';
-import 'package:marketly/item/item_model.dart';
+import 'package:marketly/models/models.dart';
 import 'package:marketly/screens/screens.dart';
 import 'package:path_provider/path_provider.dart';
 
-const String categoriesBoxName = 'categories';
 const String cartBoxName = 'cart';
 
 Future<void> main() async {
@@ -14,11 +12,10 @@ Future<void> main() async {
   final directory = await getApplicationDocumentsDirectory();
   Hive.init(directory.path);
 
-  Hive.registerAdapter(CategoryAdapter());
-  Hive.openBox<Category>(categoriesBoxName);
-
+  Hive.registerAdapter(GroceryItemsAdapter());
   Hive.registerAdapter(ItemAdapter());
-  Hive.openBox<Item>(cartBoxName);
+  Hive.openBox<GroceryItems>(cartBoxName);
+
   runApp(MarketlyApp());
 }
 

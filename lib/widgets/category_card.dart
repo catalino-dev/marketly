@@ -1,47 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:marketly/config/palette.dart';
+import 'package:marketly/models/models.dart';
 
 class CategoryCard extends StatelessWidget {
-  final String category;
+  final GroceryItems category;
   final Function press;
 
   const CategoryCard({
     Key key,
-    @required this.category,
+    this.category,
     this.press,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return GestureDetector(
-          onTap: press,
-          child: Container(
-            width: constraints.maxWidth,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          category,
-                          maxLines: 1
-                        )
-                      ],
-                    ),
-                  ),
-                ],
+    return GestureDetector(
+      onTap: press,
+      child: Container(
+        height: 125.0,
+        width: 225.0,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15.0),
+            color: Palette.primary
+        ),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(height: 10.0),
+              Text(
+                category.category,
+                style: TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
-            ),
-          ),
-        );
-      },
+            ]
+        ),
+      ),
     );
   }
 }

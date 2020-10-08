@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:marketly/item/item.dart';
+import 'package:marketly/models/models.dart';
 import 'package:marketly/widgets/widgets.dart';
 
 class GroceryListContainer extends StatelessWidget {
-  final Item item;
+  final GroceryItems item;
 
   const GroceryListContainer({
     Key key,
@@ -32,9 +32,7 @@ class GroceryListContainer extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _GroceryHeader(item: item),
-                  const SizedBox(height: 4.0),
-                  Text(item.description),
+                  Text('TEST'),
                   const SizedBox(height: 6.0),
                 ],
               ),
