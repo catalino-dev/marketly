@@ -36,6 +36,7 @@ dev_dependencies:
 
   hive_generator: ^0.8.1
   build_runner: ^1.10.3
+  mockito: ^4.1.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -78,3 +79,10 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+fonts:
+  - family: Balsamiq
+    fonts:
+      - asset: assets/fonts/BalsamiqSans-Regular.ttf
+      - asset: assets/fonts/BalsamiqSans-Bold.ttf
+        weight: 700

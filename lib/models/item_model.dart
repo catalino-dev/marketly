@@ -4,15 +4,15 @@ import 'package:meta/meta.dart';
 part 'item_model.g.dart';
 
 @HiveType(typeId: 1)
-class Item {
+class Item extends HiveObject {
 
   @HiveField(0)
-  final String name;
+  String name;
 
   @HiveField(1)
-  final String description;
+  String description;
 
-  const Item({
+  Item({
     @required this.name,
     this.description,
   });

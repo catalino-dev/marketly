@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:marketly/config/constants.dart';
 
 class ListHeader extends StatelessWidget {
 
@@ -19,11 +20,8 @@ class ListHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(
-            headerText,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
-            ),
+              headerText,
+              style: kTitleTextStyle
           ),
           IconButton(
             icon: Icon(Icons.add, color: Colors.black38),

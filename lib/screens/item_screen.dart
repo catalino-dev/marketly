@@ -1,33 +1,81 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
+import 'package:marketly/config/palette.dart';
 import 'package:marketly/models/item_model.dart';
 import 'package:marketly/models/models.dart';
+import 'package:marketly/screens/screens.dart';
+import 'package:marketly/widgets/widgets.dart';
 
 class ItemScreen extends StatefulWidget {
-  ItemScreen();
+  final int groceryIndex;
+  final String category;
+  final int itemIndex;
+  final Item item;
+
+  ItemScreen({
+    Key key,
+    this.groceryIndex,
+    this.category,
+    this.itemIndex,
+    this.item,
+  });
 
   @override
-  _ItemScreenState createState() => _ItemScreenState();
+  _ItemScreenState createState() => _ItemScreenState(
+      groceryIndex: groceryIndex,
+      category: category,
+      itemIndex: itemIndex,
+      item: item);
 }
 
 class _ItemScreenState extends State<ItemScreen> {
   final String cartBoxName = 'cart';
+  final int groceryIndex;
+  final String category;
+  final int itemIndex;
+  final Item item;
 
   Box<GroceryItems> cart;
+  final List<String> errors = [];
+  String name;
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
+  _ItemScreenState({
+    this.groceryIndex,
+    this.category,
+    this.itemIndex,
+    this.item
+  }) : super();
+
+  void addError({String error}) {
+    if (!errors.contains(error))
+      setState(() {
+        errors.add(error);
+      });
+  }
+
+  void removeError({String error}) {
+    if (errors.contains(error))
+      setState(() {
+        errors.remove(error);
+      });
+  }
+
   @override
   void initState() {
     super.initState();
+    print(']======+++++++++===');
+    print(groceryIndex);
     cart = Hive.box<GroceryItems>(cartBoxName);
   }
 
   @override
   Widget build(BuildContext context) {
 
+    bool isExistingItem = item != null;
     return Scaffold(
       backgroundColor: Colors.white,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -43,8 +91,8 @@ class _ItemScreenState extends State<ItemScreen> {
                       right: 30.0,
                       top: 60.0,
                     ),
-                    height: 520.0,
-                    color: Color(0xFF32A060),
+                    height: 275.0,
+                    color: Palette.primary,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -68,168 +116,127 @@ class _ItemScreenState extends State<ItemScreen> {
                         ),
                         SizedBox(height: 20.0),
                         Text(
-                          'Item Item',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 30.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 40.0),
-                        Text(
-                          'NAME',
+                          category.toUpperCase(),
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15.0,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
-                        SizedBox(height: 10.0),
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          color: Colors.grey.withOpacity(0.2),
-                          child: TextField(
-                            keyboardType: TextInputType.text,
-                            textCapitalization: TextCapitalization.sentences,
-                            decoration: InputDecoration(
-                                hintText: "Title",
-                                hintStyle: TextStyle(fontSize: 18, color: Colors.white30),
-                                border: InputBorder.none
-                            ),
-                            controller: nameController,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 10.0),
-                        Text(
-                          'DESCRIPTION',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15.0,
-                          ),
-                        ),
-                        SizedBox(height: 10.0),
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          color: Colors.grey.withOpacity(0.2),
-                          child: TextField(
-                            keyboardType: TextInputType.text,
-                            textCapitalization: TextCapitalization.sentences,
-                            decoration: InputDecoration(
-                                hintText: "Description",
-                                hintStyle: TextStyle(fontSize: 18, color: Colors.white30),
-                                border: InputBorder.none
-                            ),
-                            controller: descriptionController,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 10.0),
-                        RawMaterialButton(
-                          padding: EdgeInsets.all(20.0),
-                          shape: CircleBorder(),
-                          elevation: 2.0,
-                          fillColor: Colors.black,
-                          child: Icon(
-                            Icons.add_shopping_cart,
-                            color: Colors.white,
-                            size: 35.0,
-                          ),
-                          onPressed: () {
-                            final String name = nameController.text;
-                            final String description = descriptionController.text;
-
-
-                            Item item = Item(name: name, description: description);
-                            cart.get(0).items.add(item);
-                            GroceryItems gi = GroceryItems(category: 'Default', items: [item]);
-                            cart.add(gi);
-                            print('---------------Adding the item');
-                            print(item);
-                          },
-                        ),
+                        SizedBox(height: 5.0),
+                        HeaderLabel(labelText: isExistingItem ? item.name : 'Add new item'),
                       ],
                     ),
                   ),
                 ],
               ),
               Container(
-                height: 500.0,
-                transform: Matrix4.translationValues(0.0, -20.0, 0.0),
+                height: MediaQuery.of(context).size.height / 1.9,
+                transform: Matrix4.translationValues(0.0, -30.0, 0.0),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20.0),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(
-                        left: 30.0,
-                        right: 30.0,
-                        top: 40.0,
+                child: Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        child: TextFormField(
+                          keyboardType: TextInputType.text,
+                          onSaved: (newValue) => name = newValue,
+                          onChanged: (value) {
+                            if (value.isNotEmpty) {
+                              removeError(error: "Input name");
+                            }
+                            return null;
+                          },
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              addError(error: "Input name");
+                              return "";
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                            labelText: "Name",
+                            hintText: isExistingItem ? item.name : 'Enter name',
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                          ),
+                          controller: nameController,
+                        ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'All to know...',
-                            style: TextStyle(
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.w600,
-                            ),
+                      SizedBox(height: 30.0),
+                      Container(
+                        child: TextFormField(
+                          keyboardType: TextInputType.text,
+                          onSaved: (newValue) => name = newValue,
+                          onChanged: (value) {
+                            if (value.isNotEmpty) {
+                              removeError(error: "Input description");
+                            }
+                            return null;
+                          },
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              addError(error: "Input description");
+                              return "";
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                            labelText: "Description",
+                            hintText: isExistingItem ? item.description : 'Enter description',
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
                           ),
-                          SizedBox(height: 10.0),
-                          Text(
-                            'Description',
-                            style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: 16.0,
-                            ),
-                          ),
-                        ],
+                          controller: descriptionController,
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 30.0,
-                        vertical: 40.0,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Details',
-                            style: TextStyle(
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(height: 10.0),
-                          Text(
-                            'Item height: 35-45cm',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          Text(
-                            'Nursery pot width: 12cm',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+              ),
+              BottomBar(
+                buttonText: isExistingItem ? 'Update Item' : 'Add Item',
+                buttonAction: () {
+                  final String name = nameController.text;
+                  final String description = descriptionController.text;
+
+                  Item item = Item(name: name, description: description);
+                  print('------**********---------');
+                  print(cart.values.isNotEmpty);
+                  print(groceryIndex);
+
+                  GroceryItems activeCart;
+                  if (groceryIndex != null) {
+                    activeCart = cart.getAt(groceryIndex);
+                    List<Item> items = activeCart.items;
+                    print(itemIndex);
+                    print('------***sdsdsdsdszzzz***---------');
+                    if (itemIndex != null) {
+                      items[itemIndex].name = name;
+                      items[itemIndex].description = description;
+                    } else {
+                      activeCart.items.add(item);
+                    }
+
+                    activeCart.save();
+                    Navigator.pop(context);
+                  } else {
+                    activeCart = GroceryItems(
+                        category: category,
+                        items: [Item(name: name, description: description)]
+                    );
+                    cart.add(activeCart);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => GroceryItemsScreen(groceryIndex: groceryIndex, groceryItems: activeCart),
+                      ),
+                    );
+                    // Navigator.pop(context);
+                  }
+                },
               ),
             ],
           ),

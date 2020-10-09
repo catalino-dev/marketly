@@ -5,22 +5,32 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:marketly/models/item_model.dart';
 import 'package:marketly/models/models.dart';
 import 'package:marketly/screens/screens.dart';
+import 'package:marketly/widgets/widgets.dart';
+import 'package:marketly/config/constants.dart';
+import 'package:marketly/config/palette.dart';
 
 class GroceryItemsScreen extends StatefulWidget {
+  final int groceryIndex;
   final GroceryItems groceryItems;
 
   GroceryItemsScreen({
     Key key,
+    this.groceryIndex,
     this.groceryItems,
   }) : super(key: key);
 
   @override
-  _GroceryItemsScreenState createState() => _GroceryItemsScreenState(groceryItems: groceryItems);
+  _GroceryItemsScreenState createState() => _GroceryItemsScreenState(
+      groceryIndex: groceryIndex, groceryItems: groceryItems);
 }
 
 class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
   final String cartBoxName = 'cart';
+  final int groceryIndex;
   final GroceryItems groceryItems;
+
+  final _formKey = GlobalKey<FormState>();
+  String category = 'Unnamed Category';
 
   Box<GroceryItems> cart;
 
@@ -29,20 +39,46 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
   final TextEditingController descriptionController = TextEditingController();
 
   _GroceryItemsScreenState({
+    this.groceryIndex,
     this.groceryItems
   }) : super();
 
   @override
   void initState() {
     super.initState();
-    print('---------category-------------');
-    print(groceryItems.category);
+    Hive.openBox<GroceryItems>(cartBoxName);
     cart = Hive.box<GroceryItems>(cartBoxName);
+  }
+
+  final List<String> errors = [];
+
+  void addError({String error}) {
+    if (!errors.contains(error))
+      setState(() {
+        errors.add(error);
+      });
+  }
+
+  void removeError({String error}) {
+    if (errors.contains(error))
+      setState(() {
+        errors.remove(error);
+      });
+  }
+
+  void choiceAction(String choice) {
+    if (choice == DeleteCategory) {
+      GroceryItems defaultList = cart.values.where((element) => element.category == groceryItems.category).first;
+      print(defaultList.isInBox);
+      defaultList.delete();
+      Navigator.pop(context);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
 
+    bool isExistingCategory = groceryItems != null;
     return Scaffold(
       backgroundColor: Colors.white,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -59,7 +95,7 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                       top: 60.0,
                     ),
                     height: 275.0,
-                    color: Color(0xFF32A060),
+                    color: Palette.primary,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -74,32 +110,59 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                                 color: Colors.white,
                               ),
                             ),
-                            Icon(
-                              Icons.save,
-                              size: 30.0,
-                              color: Colors.white,
+                            PopupMenuButton<String>(
+                              onSelected: choiceAction,
+                              icon: Icon(
+                                Icons.more_vert,
+                                size: 30.0,
+                                color: Colors.white,
+                              ),
+                              itemBuilder: (BuildContext context){
+                                return contextMenu.map((String choice){
+                                  return PopupMenuItem<String>(
+                                    value: choice,
+                                    child: Text(choice),
+                                  );
+                                }).toList();
+                              },
                             ),
                           ],
                         ),
-                        SizedBox(height: 10.0),
+                        SizedBox(height: 20.0),
+                        Text(
+                          'CATEGORY',
+                          style: TextStyle(
+                            fontFamily: 'Ikaros',
+                            color: Colors.white,
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        SizedBox(height: 5.0),
+                        isExistingCategory ? HeaderLabel(labelText: groceryItems.category) :
                         Container(
-                          padding: EdgeInsets.all(15),
-                          color: Colors.grey.withOpacity(0.1),
-                          child: TextField(
-                            keyboardType: TextInputType.text,
-                            textCapitalization: TextCapitalization.sentences,
-                            decoration: InputDecoration(
-                                floatingLabelBehavior: FloatingLabelBehavior.always,
-                                labelText: 'CATEGORY',
-                                labelStyle: TextStyle(fontSize: 18.0, color: Colors.white),
-                                hintText: 'Title',
-                                hintStyle: TextStyle(fontSize: 18, color: Colors.white30),
-                                border: InputBorder.none
-                            ),
-                            controller: nameController,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
+                          child: Form(
+                            key: _formKey,
+                            child: TextFormField(
+                              onSaved: (newValue) => category = newValue,
+                              decoration: InputDecoration(
+                                hintText: 'Enter category',
+                              ),
+                              onChanged: (value) {
+                                print(value);
+                                if (value.isNotEmpty) {
+                                  removeError(error: 'Enter a category');
+                                }
+                                category = value;
+                              },
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  addError(error: 'Enter a category');
+                                  return "";
+                                }
+                                return null;
+                              },
+                              controller: categoryController,
                             ),
                           ),
                         ),
@@ -109,8 +172,8 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                 ],
               ),
               Container(
-                height: 500.0,
-                transform: Matrix4.translationValues(0.0, -20.0, 0.0),
+                height: MediaQuery.of(context).size.height / 1.9,
+                transform: Matrix4.translationValues(0.0, -30.0, 0.0),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(30.0),
@@ -118,6 +181,11 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(30.0),
+                      child: Text('Items', style: kTitleTextStyle),
+                    ),
+                    isExistingCategory ?
                     Expanded(
                       child: FutureBuilder<Box<GroceryItems>>(
                           future: Hive.openBox(cartBoxName),
@@ -125,76 +193,112 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                             return ValueListenableBuilder(
                               valueListenable: cart.listenable(),
                               builder: (context, Box<GroceryItems> cart, _) {
-                                return ListView.builder(
-                                  itemCount: cart.values.length,
-                                  padding: EdgeInsets.symmetric(horizontal: 16),
-                                  itemBuilder: (context, index) {
-                                    List<Item> items = cart.getAt(index).items;
+                                GroceryItems grocery = cart.get(groceryIndex);
+                                print('--------groceryItems');
+                                print(groceryItems);
+                                List<Item> items = grocery != null ? grocery.items : groceryItems.items;
 
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (_) => ItemScreen(),
+                                if (cart.values.length > 0) {
+                                  return ListView.builder(
+                                      itemCount: items.length,
+                                      padding: EdgeInsets.symmetric(horizontal: 30),
+                                      itemBuilder: (context, index) {
+                                        Item item = items.toList()[index];
+                                        return GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (_) => ItemScreen(
+                                                    groceryIndex: groceryIndex,
+                                                    category: grocery.category,
+                                                    itemIndex: index,
+                                                    item: item
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: ItemContent(
+                                            number: "${index+1}",
+                                            name: "${item.name}",
+                                            description: "${item.description}",
+                                            isDone: true,
                                           ),
                                         );
-                                      },
-                                      child: Container(
-                                        margin: EdgeInsets.only(left: 16, right: 16, bottom: 10),
-                                        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(15),
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black12,
-                                              spreadRadius: 1,
-                                              blurRadius: 10,
-                                            ),
-                                          ],
-                                        ),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Container(
-                                                    width: MediaQuery.of(context).size.width * .4,
-                                                    child: Text(
-                                                      "${items[0].name}",
-                                                      maxLines: 1,
-                                                      overflow: TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "${items[0].description}",
-                                                    style: TextStyle(
-                                                      color: Colors.black26,
-                                                      height: 1.5,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                );
+                                      }
+                                  );
+                                } else {
+                                  return Scaffold();
+                                }
                               },
                             );
                           }
+                      ),
+                    ) :
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(80.0),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Column(
+                            children: [
+                              Text(
+                                'Looks like there\'s nothing here!\nAdd new item',
+                                textAlign: TextAlign.center,
+                                style:  TextStyle(
+                                  fontSize: 16,
+                                  color: kTextColor,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => ItemScreen(
+                                          groceryIndex: groceryIndex,
+                                          category: category,
+                                          itemIndex: null,
+                                          item: null
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Icon(
+                                  Icons.add_circle_rounded,
+                                  size: 80.0,
+                                  color: Colors.grey.shade300,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ],
+                    ),
+                  ],
                 ),
+              ),
+              BottomBar(
+                buttonText: 'Add New Item',
+                buttonAction: () {
+                  if (_formKey.currentState != null && !_formKey.currentState.validate()) {
+                    return;
+                  }
+
+                  print('+++++++++++++++groceryItems.category+++++++++++===');
+                  print(groceryItems.category);
+                  print(category);
+                  print('+++++++++++++++groceryItems.category+++++++++++===');
+
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ItemScreen(
+                          groceryIndex: groceryIndex,
+                          category: groceryItems != null ? groceryItems.category : category,
+                          itemIndex: null,
+                          item: null
+                      ),
+                    ),
+                  );
+                },
               ),
             ],
           ),

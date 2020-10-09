@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 part 'grocery_items_model.g.dart';
 
 @HiveType(typeId: 0)
-class GroceryItems {
+class GroceryItems extends HiveObject {
 
   @HiveField(0)
   final String category;
