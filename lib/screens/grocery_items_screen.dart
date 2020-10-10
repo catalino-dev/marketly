@@ -81,7 +81,7 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                                 color: Colors.white,
                               ),
                             ),
-                            groceryItems != null ? PopupMenuButton<String>(
+                            isExistingCategory ? PopupMenuButton<String>(
                               onSelected: _triggerContextMenuAction,
                               icon: Icon(
                                 Icons.more_vert,
@@ -176,6 +176,9 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                               valueListenable: cart.listenable(),
                               builder: (context, Box<GroceryItems> cart, _) {
                                 GroceryItems grocery = cart.get(groceryIndex);
+                                print('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
+                                print(cart);
+                                print(grocery);
                                 String category = grocery != null ? grocery.category : groceryItems.category;
                                 List<Item> items = grocery != null ? grocery.items : groceryItems.items;
                                 if (items != null && items.length > 0) {

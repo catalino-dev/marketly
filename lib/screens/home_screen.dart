@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
+import 'package:marketly/config/constants.dart';
+import 'package:marketly/config/palette.dart';
 import 'package:marketly/main.dart';
 import 'package:marketly/models/models.dart';
 import 'package:marketly/screens/screens.dart';
@@ -44,10 +46,13 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Icon(
-                    Icons.segment,
-                    size: 30.0,
-                    color: Colors.grey,
+                  Text(
+                    'Marketly',
+                    style: kTitleTextStyle.copyWith(
+                      color: Palette.primary,
+                      fontSize: 24,
+                      fontFamily: 'Balsamiq'
+                    ),
                   ),
                   Icon(
                     Icons.shopping_cart,

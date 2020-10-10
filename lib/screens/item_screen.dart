@@ -5,6 +5,7 @@ import 'package:marketly/config/constants.dart';
 import 'package:marketly/config/palette.dart';
 import 'package:marketly/models/item_model.dart';
 import 'package:marketly/models/models.dart';
+import 'package:marketly/screens/screens.dart';
 import 'package:marketly/widgets/widgets.dart';
 
 class ItemScreen extends StatefulWidget {
@@ -194,18 +195,20 @@ class _ItemScreenState extends State<ItemScreen> {
                 ),
               ),
               BottomBar(
-                buttonText: isExistingItem ? 'Update Item' : 'Add Item',
+                buttonText: isExistingItem ? 'Edit Item' : 'Add Item',
                 buttonAction: () {
-                  final String name = nameController.text;
-                  final String description = descriptionController.text;
 
                   if (!_formKey.currentState.validate()) {
                     return;
                   }
 
+                  final String name = nameController.text;
+                  final String description = descriptionController.text;
                   Item item = Item(name: name, description: description);
 
                   GroceryItems activeCart;
+                  print(groceryIndex);
+                  print(itemIndex);
                   if (groceryIndex != null) {
                     print(itemIndex);
                     if (itemIndex != null) {
@@ -224,16 +227,25 @@ class _ItemScreenState extends State<ItemScreen> {
                         activeCart.save();
                       }
                     }
+                    Navigator.pop(context);
                   } else {
-                    activeCart = GroceryItems(
-                        category: category,
-                        items: [Item(name: name, description: description)]
-                    );
+                    activeCart = GroceryItems(category: category);
+                    print(cart);
+                    // activeCart = cart.getAt(groceryIndex);
+                    activeCart.items = [item];
                     cart.add(activeCart);
                     activeCart.save();
-                  }
 
-                  Navigator.pop(context);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => GroceryItemsScreen(
+                            groceryIndex: groceryIndex,
+                            groceryItems: activeCart,
+                        )
+                      ),
+                    );
+                    Navigator.pop(context);
+                  }
                 },
               ),
             ],
