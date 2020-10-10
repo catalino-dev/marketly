@@ -286,6 +286,7 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
           groceryItems.items.add(newItem);
         }
         groceryItems.save();
+        cart.put(groceryItems.key, groceryItems);
         cart.watch();
         Navigator.pop(context);
       } else {
