@@ -36,8 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         child: ListView(
-          // shrinkWrap: true,
-          padding: EdgeInsets.symmetric(vertical: 60.0),
+          shrinkWrap: true,
+          padding: EdgeInsets.only(top: 60),
           children: <Widget>[
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30.0),

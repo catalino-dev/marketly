@@ -5,7 +5,6 @@ import 'package:marketly/config/constants.dart';
 import 'package:marketly/config/palette.dart';
 import 'package:marketly/models/item_model.dart';
 import 'package:marketly/models/models.dart';
-import 'package:marketly/screens/screens.dart';
 import 'package:marketly/widgets/widgets.dart';
 
 class ItemScreen extends StatefulWidget {
@@ -208,29 +207,33 @@ class _ItemScreenState extends State<ItemScreen> {
 
                   GroceryItems activeCart;
                   if (groceryIndex != null) {
-                    activeCart = cart.getAt(groceryIndex);
-                    List<Item> items = activeCart.items;
+                    print(itemIndex);
                     if (itemIndex != null) {
+                      activeCart = cart.getAt(groceryIndex);
+                      List<Item> items = activeCart.items;
+
                       items[itemIndex].name = name;
                       items[itemIndex].description = description;
+                      activeCart.save();
                     } else {
-                      activeCart.items.add(item);
+                      activeCart = cart.getAt(groceryIndex);
+                      if (activeCart.items == null) {
+                        activeCart.items = [item];
+                      } else {
+                        activeCart.items.add(item);
+                        activeCart.save();
+                      }
                     }
-
-                    activeCart.save();
-                    Navigator.pop(context);
                   } else {
                     activeCart = GroceryItems(
                         category: category,
                         items: [Item(name: name, description: description)]
                     );
                     cart.add(activeCart);
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => GroceryItemsScreen(groceryIndex: groceryIndex, groceryItems: activeCart),
-                      ),
-                    );
+                    activeCart.save();
                   }
+
+                  Navigator.pop(context);
                 },
               ),
             ],

@@ -30,7 +30,8 @@ class CategoryGridList extends StatelessWidget {
           }
       );
     }
-    return Expanded(
+    return Container(
+        height: MediaQuery.of(context).size.height / 1.39,
         child: FutureBuilder<Box<GroceryItems>>(
             future: Hive.openBox(cartBoxName),
             builder: (context, snapshot) {

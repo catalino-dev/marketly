@@ -21,28 +21,36 @@ class ItemContent extends StatelessWidget {
         children: <Widget>[
           Text(
             number,
+            overflow: TextOverflow.clip,
             style: kHeadingStyle.copyWith(
               color: kTextColor.withOpacity(.15),
               fontSize: 32,
             ),
           ),
           SizedBox(width: 20),
-          RichText(
-            text: TextSpan(
+          Container(
+            // height: 100,
+            width: MediaQuery.of(context).size.width / 1.7,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextSpan(
-                  text: name,
+                Text(
+                  name,
                   style: kSubtitleTextStyle.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
-                TextSpan(
-                  text: description,
+                Text(
+                  description,
                   style: TextStyle(
                     color: kTextColor.withOpacity(.5),
                     fontSize: 14,
-                    height: 1.8,
+                    height: 1.5,
                   ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
                 ),
               ],
             ),

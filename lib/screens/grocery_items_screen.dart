@@ -50,22 +50,6 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
     cart = Hive.box<GroceryItems>(cartBoxName);
   }
 
-  final List<String> errors = [];
-
-  void addError({String error}) {
-    if (!errors.contains(error))
-      setState(() {
-        errors.add(error);
-      });
-  }
-
-  void removeError({String error}) {
-    if (errors.contains(error))
-      setState(() {
-        errors.remove(error);
-      });
-  }
-
   @override
   Widget build(BuildContext context) {
 
@@ -73,7 +57,7 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark,
+        value: SystemUiOverlayStyle.light,
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
@@ -112,7 +96,19 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                                   );
                                 }).toList();
                               },
-                            ) : SizedBox(),
+                            ) :
+                            GestureDetector(
+                              onTap: () {
+                                GroceryItems groceryItems = GroceryItems(category: category);
+                                cart.add(groceryItems);
+                                Navigator.pop(context);
+                              },
+                              child: Icon(
+                                Icons.save,
+                                size: 30.0,
+                                color: Colors.white,
+                              ),
+                            ),
                           ],
                         ),
                         SizedBox(height: 20.0),
@@ -135,15 +131,16 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                                 hintText: 'Enter category',
                               ),
                               onChanged: (value) {
-                                if (value.isNotEmpty) {
-                                  removeError(error: 'Enter a category');
-                                }
                                 category = value;
+                                if (_formKey.currentState.validate()) {
+                                  return;
+                                }
                               },
                               validator: (value) {
                                 if (value.isEmpty) {
-                                  addError(error: 'Enter a category');
-                                  return "";
+                                  return 'Enter a category';
+                                } else if (value.isNotEmpty) {
+                                  return null;
                                 }
                                 return null;
                               },
@@ -181,8 +178,7 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                                 GroceryItems grocery = cart.get(groceryIndex);
                                 String category = grocery != null ? grocery.category : groceryItems.category;
                                 List<Item> items = grocery != null ? grocery.items : groceryItems.items;
-
-                                if (cart.values.length > 0) {
+                                if (items != null && items.length > 0) {
                                   return ListView.builder(
                                       itemCount: items.length,
                                       padding: EdgeInsets.symmetric(horizontal: 30),
@@ -210,13 +206,22 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                                       }
                                   );
                                 } else {
-                                  return Scaffold();
+                                  return EmptyState(
+                                      actionText: 'Looks like there\'s nothing here!\nAdd new item',
+                                      actionCommand: () {
+                                        if (hasInvalidFormState()) {
+                                          return;
+                                        }
+                                        navigateToItemScreen(context, category);
+                                      }
+                                  );
                                 }
                               },
                             );
                           }
                       ),
-                    ) : EmptyState(
+                    ) :
+                    EmptyState(
                       actionText: 'Looks like there\'s nothing here!\nAdd new item',
                       actionCommand: () {
                         if (hasInvalidFormState()) {
