@@ -5,16 +5,6 @@ const kPrimaryColor = Palette.primary;
 const kSecondaryColor = Palette.accent;
 const kTextColor = Palette.textColor;
 
-const kAnimationDuration = Duration(milliseconds: 200);
-
-final headingStyle = TextStyle(
-  fontFamily: 'Balsamiq',
-  fontSize: 28,
-  fontWeight: FontWeight.bold,
-  color: Colors.black,
-  height: 1.5,
-);
-
 const String EditCategoryName = 'Edit Category Name';
 const String RemoveCategory = 'Remove Category';
 const List<String> categoryContextMenu = <String>[
@@ -27,16 +17,16 @@ const List<String> itemContextMenu = <String>[
   RemoveItem
 ];
 
-const kTitleTextStyle = TextStyle(
+const kHeadingStyle = TextStyle(
   fontFamily: 'Balsamiq',
-  fontSize: 20,
+  fontSize: 28,
   color: kTextColor,
   fontWeight: FontWeight.bold,
 );
 
-const kHeadingStyle = TextStyle(
+const kTitleTextStyle = TextStyle(
   fontFamily: 'Balsamiq',
-  fontSize: 28,
+  fontSize: 20,
   color: kTextColor,
   fontWeight: FontWeight.bold,
 );
@@ -47,17 +37,26 @@ const kSubtitleTextStyle = TextStyle(
   color: kTextColor,
 );
 
-final otpInputDecoration = InputDecoration(
-  contentPadding:
-  EdgeInsets.symmetric(vertical: 15),
-  border: outlineInputBorder(),
-  focusedBorder: outlineInputBorder(),
+final inputDecoration = InputDecoration(
+  floatingLabelBehavior: FloatingLabelBehavior.always,
+  contentPadding: EdgeInsets.symmetric(horizontal: 42, vertical: 20),
   enabledBorder: outlineInputBorder(),
+  focusedBorder: outlineInputBorder(),
+  border: outlineInputBorder(),
 );
 
 OutlineInputBorder outlineInputBorder() {
   return OutlineInputBorder(
-    borderRadius: BorderRadius.circular(15),
-    borderSide: BorderSide(color: kTextColor),
+    borderRadius: BorderRadius.circular(28),
+    borderSide: BorderSide(color: Colors.black38),
+    gapPadding: 10,
+  );
+}
+
+OutlineInputBorder outlineInputBorderDark() {
+  return OutlineInputBorder(
+    borderRadius: BorderRadius.circular(28),
+    borderSide: BorderSide(color: Colors.white70),
+    gapPadding: 10,
   );
 }

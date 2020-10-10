@@ -124,6 +124,9 @@ class ItemDialog extends StatelessWidget {
                 SizedBox(width: 5),
                 GestureDetector(
                   onTap: () {
+                    if (!_formKey.currentState.validate()) {
+                      return;
+                    }
                     Item item = Item(name: nameController.text, description: descriptionController.text);
                     buttonAction(item);
                   },

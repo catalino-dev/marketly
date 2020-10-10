@@ -18,7 +18,6 @@ class BottomBar extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
       height: 100,
-      width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40)),
@@ -30,29 +29,25 @@ class BottomBar extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: GestureDetector(
-              onTap: buttonAction,
-              child: Container(
-                alignment: Alignment.center,
-                height: 48,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(40),
-                  color: Palette.primary,
-                ),
-                child: Text(
-                  buttonText,
-                  style: kSubtitleTextStyle.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+      child: Container(
+        child: GestureDetector(
+          onTap: buttonAction,
+          child: Container(
+            alignment: Alignment.center,
+            height: 48,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(40),
+              color: Palette.primary,
+            ),
+            child: Text(
+              buttonText,
+              style: kSubtitleTextStyle.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
-          )
-        ],
+          ),
+        )
       ),
     );
   }
