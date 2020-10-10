@@ -17,9 +17,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Box<GroceryItems> cart;
 
-  final TrackingScrollController _trackingScrollController = TrackingScrollController();
-  int selectedPage = 0;
-
   @override
   void initState() {
     super.initState();
@@ -28,7 +25,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    _trackingScrollController.dispose();
     Hive.close();
     super.dispose();
   }
@@ -40,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         child: ListView(
-          shrinkWrap: true,
+          // shrinkWrap: true,
           padding: EdgeInsets.symmetric(vertical: 60.0),
           children: <Widget>[
             Padding(

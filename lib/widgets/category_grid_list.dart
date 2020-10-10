@@ -3,34 +3,42 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:marketly/models/models.dart';
 import 'package:marketly/screens/screens.dart';
-
-import 'widgets.dart';
+import 'package:marketly/widgets/widgets.dart';
 
 class CategoryGridList extends StatelessWidget {
   final String cartBoxName = 'cart';
 
   final Box<GroceryItems> cart;
-  final Function press;
 
   const CategoryGridList({
     Key key,
     this.cart,
-    this.press,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    print(cart.values.length);
+    if (cart.values.length == 0) {
+      return EmptyState(
+          actionText: 'Looks like there\'s nothing here!\nAdd new category',
+          actionCommand: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => GroceryItemsScreen(),
+              ),
+            );
+          }
+      );
+    }
     return Expanded(
         child: FutureBuilder<Box<GroceryItems>>(
             future: Hive.openBox(cartBoxName),
             builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.done) {
-                return CircularProgressIndicator();
-              }
 
               return ValueListenableBuilder(
                   valueListenable: cart.listenable(),
                   builder: (context, Box<GroceryItems> cart, _) {
+
                     return GridView.builder(
                       padding: EdgeInsets.all(30),
                       scrollDirection: Axis.vertical,
@@ -45,6 +53,8 @@ class CategoryGridList extends StatelessWidget {
                       itemBuilder: (context, index) {
                         GroceryItems groceryItems = cart.getAt(index);
                         int groceryIndex = index;
+                        print(groceryItems);
+                        print(groceryIndex);
                         if (groceryItems == null) {
                           groceryIndex = null;
                         }

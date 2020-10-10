@@ -216,40 +216,15 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                             );
                           }
                       ),
-                    ) :
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(80.0),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Column(
-                            children: [
-                              Text(
-                                'Looks like there\'s nothing here!\nAdd new item',
-                                textAlign: TextAlign.center,
-                                style:  TextStyle(
-                                  fontSize: 16,
-                                  color: kTextColor,
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  if (hasInvalidFormState()) {
-                                    return;
-                                  }
-                                  navigateToItemScreen(context, category);
-                                },
-                                child: Icon(
-                                  Icons.add_circle_rounded,
-                                  size: 80.0,
-                                  color: Colors.grey.shade300,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                    ) : EmptyState(
+                      actionText: 'Looks like there\'s nothing here!\nAdd new item',
+                      actionCommand: () {
+                        if (hasInvalidFormState()) {
+                          return;
+                        }
+                        navigateToItemScreen(context, category);
+                      }
+                    )
                   ],
                 ),
               ),
