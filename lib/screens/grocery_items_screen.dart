@@ -63,9 +63,6 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
   Widget build(BuildContext context) {
 
     bool isExistingCategory = groceryItems != null;
-    print('-----------------------');
-    print(isExistingCategory);
-    print(groceryItems?.category);
     return WillPopScope(
       onWillPop: () {
         return _navigateToHomeScreen(context);
@@ -308,7 +305,6 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
   }
 
   void _saveGroceryItems(categoryName) {
-    print(categoryName);
     GroceryItems groceryItems = cart.getAt(groceryIndex);
     groceryItems.category = categoryName;
     groceryItems.save();

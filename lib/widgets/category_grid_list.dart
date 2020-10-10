@@ -53,8 +53,6 @@ class CategoryGridList extends StatelessWidget {
                       itemBuilder: (context, index) {
                         GroceryItems groceryItems = cart.getAt(index);
                         int groceryIndex = index;
-                        print(groceryItems);
-                        print(groceryIndex);
                         if (groceryItems == null) {
                           groceryIndex = null;
                         }
