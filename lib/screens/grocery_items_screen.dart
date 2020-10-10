@@ -52,7 +52,6 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
   @override
   Widget build(BuildContext context) {
 
-    print(groceryItems);
     bool isExistingCategory = groceryItems != null;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -274,27 +273,30 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
   }
 
   void _validateAndSaveGroceryItems(Item newItem, BuildContext context) {
-    print(groceryIndex);
     if (groceryIndex != null) {
       GroceryItems groceryItems = cart.getAt(groceryIndex);
       if (newItem != null) groceryItems.items.add(newItem);
       groceryItems.save();
     } else {
       Iterable<GroceryItems> existingGroceryItemsList = cart.values.where((element) => element.category == category);
-      print(existingGroceryItemsList);
       if (existingGroceryItemsList.length == 0) {
         GroceryItems groceryItems = GroceryItems(category: category, items: []);
-        if (newItem != null) {
+        cart.add(groceryItems);
+        if (newItem != null && groceryItems.items.length == 0) {
           groceryItems.items.add(newItem);
         }
-        cart.add(groceryItems);
         groceryItems.save();
+        cart.watch();
+        Navigator.pop(context);
       } else {
-        cart.add(existingGroceryItemsList.first);
-        existingGroceryItemsList.first.save();
+        GroceryItems groceryItems = existingGroceryItemsList.first;
+        if (!groceryItems.isInBox) {
+          cart.add(groceryItems);
+        }
+        groceryItems.save();
       }
     }
-    Navigator.pop(context);
+    Navigator.maybePop(context);
   }
 
   void _saveGroceryItems(categoryName) {

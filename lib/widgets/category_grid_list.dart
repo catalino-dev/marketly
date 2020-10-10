@@ -42,7 +42,6 @@ class CategoryGridList extends StatelessWidget {
                     return GridView.builder(
                       padding: EdgeInsets.all(30),
                       scrollDirection: Axis.vertical,
-                      // shrinkWrap: true,
                       itemCount: cart.values.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,

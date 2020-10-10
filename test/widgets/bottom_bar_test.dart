@@ -6,7 +6,6 @@ void main() {
     // expect:
     await tester.pumpWidget(BottomBar(buttonText: 'Sample Text', buttonAction: () => print('test')));
 
-    // Verify that our counter starts at 0.
     expect(find.text('Sample Text'), findsOneWidget);
 
     // when:
