@@ -8,12 +8,14 @@ class ItemDialog extends StatelessWidget {
   final String title, buttonText;
   final Item item;
   final Function buttonAction;
+  final Function deleteAction;
 
   ItemDialog({
     @required this.item,
     @required this.title,
     @required this.buttonText,
     this.buttonAction,
+    this.deleteAction,
   });
 
   @override
@@ -95,26 +97,55 @@ class ItemDialog extends StatelessWidget {
           SizedBox(height: 24.0),
           Align(
             alignment: Alignment.bottomRight,
-            child: GestureDetector(
-              onTap: () {
-                Item item = Item(name: nameController.text, description: descriptionController.text);
-                buttonAction(item);
-              },
-              child: Container(
-                alignment: Alignment.center,
-                height: 48,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(40),
-                  color: Palette.primary,
-                ),
-                child: Text(
-                  buttonText,
-                  style: kSubtitleTextStyle.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  onTap: deleteAction,
+                  child: Container(
+                    alignment: Alignment.center,
+                    height: 40,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
+                      color: Colors.redAccent,
+                    ),
+                    child: Text(
+                      'Remove',
+                      style: kSubtitleTextStyle.copyWith(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                SizedBox(width: 5),
+                GestureDetector(
+                  onTap: () {
+                    Item item = Item(name: nameController.text, description: descriptionController.text);
+                    buttonAction(item);
+                  },
+                  child: Container(
+                    alignment: Alignment.center,
+                    height: 40,
+                    width: 130,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
+                      color: Palette.primary,
+                    ),
+                    child: Text(
+                      buttonText,
+                      style: kSubtitleTextStyle.copyWith(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

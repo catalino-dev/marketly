@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:marketly/config/constants.dart';
 import 'package:marketly/config/palette.dart';
@@ -20,7 +21,7 @@ class BottomBar extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(40),
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40)),
         boxShadow: [
           BoxShadow(
             offset: Offset(0, 4),
@@ -31,21 +32,6 @@ class BottomBar extends StatelessWidget {
       ),
       child: Row(
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(14),
-            height: 48,
-            width: 80,
-            decoration: BoxDecoration(
-              color: Colors.redAccent.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(40),
-            ),
-            child: Icon(
-              Icons.remove_shopping_cart,
-              size: 24.0,
-              color: Palette.textColor,
-            ),
-          ),
-          SizedBox(width: 15),
           Expanded(
             child: GestureDetector(
               onTap: buttonAction,

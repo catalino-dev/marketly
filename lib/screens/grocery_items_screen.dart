@@ -218,6 +218,12 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                                                     groceryItems.save();
                                                     Navigator.pop(context);
                                                   },
+                                                  deleteAction: () {
+                                                    GroceryItems groceryItems = cart.getAt(groceryIndex);
+                                                    groceryItems.items.removeAt(index);
+                                                    groceryItems.save();
+                                                    Navigator.pop(context);
+                                                  }
                                                 ),
                                               );
                                             },
@@ -286,6 +292,7 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
             GroceryItems groceryItems = cart.getAt(groceryIndex);
             groceryItems.items.add(newItem);
             groceryItems.save();
+            Navigator.pop(context);
           } else {
             Iterable<GroceryItems> existingGroceryItemsList = cart.values.where((element) => element.category == category);
 
@@ -297,8 +304,8 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
               cart.add(existingGroceryItemsList.first);
               existingGroceryItemsList.first.save();
             }
+            _navigateToHomeScreen(context);
           }
-          Navigator.pop(context);
         },
       ),
     );
