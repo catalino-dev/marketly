@@ -17,7 +17,6 @@ class CategoryGridList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(cart.values.length);
     if (cart.values.length == 0) {
       return EmptyState(
           actionText: 'Looks like there\'s nothing here!\nAdd new category',

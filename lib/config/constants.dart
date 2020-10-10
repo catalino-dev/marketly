@@ -15,8 +15,10 @@ final headingStyle = TextStyle(
   height: 1.5,
 );
 
+const String EditCategoryName = 'Edit Category Name';
 const String RemoveCategory = 'Remove Category';
 const List<String> categoryContextMenu = <String>[
+  EditCategoryName,
   RemoveCategory
 ];
 

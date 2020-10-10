@@ -8,7 +8,7 @@ part 'grocery_items_model.g.dart';
 class GroceryItems extends HiveObject {
 
   @HiveField(0)
-  final String category;
+  String category;
 
   @HiveField(1)
   List<Item> items;
