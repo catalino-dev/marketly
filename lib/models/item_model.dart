@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-import 'package:meta/meta.dart';
 
 part 'item_model.g.dart';
 
@@ -13,7 +12,7 @@ class Item extends HiveObject {
   String description;
 
   Item({
-    @required this.name,
+    this.name,
     this.description,
   });
 }

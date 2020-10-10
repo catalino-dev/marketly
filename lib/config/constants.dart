@@ -2,15 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:marketly/config/palette.dart';
 
 const kPrimaryColor = Palette.primary;
-const kPrimaryLightColor = Color(0xFFFFECDF);
-const kPrimaryGradientColor = LinearGradient(
-  begin: Alignment.topLeft,
-  end: Alignment.bottomRight,
-  colors: [Color(0xFFFFA53E), Color(0xFFFF7643)],
-);
-const kSecondaryColor = Color(0xFF979797);
+const kSecondaryColor = Palette.accent;
 const kTextColor = Palette.textColor;
-const kGreenColor = Palette.primary;
 
 const kAnimationDuration = Duration(milliseconds: 200);
 
@@ -22,15 +15,15 @@ final headingStyle = TextStyle(
   height: 1.5,
 );
 
-
-const String DeleteCategory = 'Delete Category';
-const List<String> contextMenu = <String>[
-  DeleteCategory
+const String RemoveCategory = 'Remove Category';
+const List<String> categoryContextMenu = <String>[
+  RemoveCategory
 ];
 
-const defaultDuration = Duration(milliseconds: 250);
-const String kEmailNullError = "Please Enter your email";
-const String kInvalidEmailError = "Please Enter Valid Email";
+const String RemoveItem = 'Remove Item';
+const List<String> itemContextMenu = <String>[
+  RemoveItem
+];
 
 const kTitleTextStyle = TextStyle(
   fontFamily: 'Balsamiq',

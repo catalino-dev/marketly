@@ -5,14 +5,12 @@ class ItemContent extends StatelessWidget {
   final String number;
   final String name;
   final String description;
-  final bool isDone;
 
   const ItemContent({
     Key key,
     this.number,
     this.name,
-    this.description,
-    this.isDone = false,
+    this.description
   }) : super(key: key);
 
   @override
@@ -56,7 +54,7 @@ class ItemContent extends StatelessWidget {
             width: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: kGreenColor.withOpacity(isDone ? 1 : .5),
+              color: kPrimaryColor.withOpacity(1),
             ),
             child: Icon(Icons.chevron_right_rounded, color: Colors.white),
           )

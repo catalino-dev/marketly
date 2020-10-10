@@ -66,15 +66,6 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
       });
   }
 
-  void choiceAction(String choice) {
-    if (choice == DeleteCategory) {
-      GroceryItems defaultList = cart.values.where((element) => element.category == groceryItems.category).first;
-      print(defaultList.isInBox);
-      defaultList.delete();
-      Navigator.pop(context);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
 
@@ -82,18 +73,14 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
+        value: SystemUiOverlayStyle.dark,
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
               Stack(
                 children: <Widget>[
                   Container(
-                    padding: EdgeInsets.only(
-                      left: 30.0,
-                      right: 30.0,
-                      top: 60.0,
-                    ),
+                    padding: EdgeInsets.only(left: 30, right: 30, top: 60),
                     height: 275.0,
                     color: Palette.primary,
                     child: Column(
@@ -110,29 +97,28 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                                 color: Colors.white,
                               ),
                             ),
-                            PopupMenuButton<String>(
-                              onSelected: choiceAction,
+                            groceryItems != null ? PopupMenuButton<String>(
+                              onSelected: _triggerContextMenuAction,
                               icon: Icon(
                                 Icons.more_vert,
                                 size: 30.0,
                                 color: Colors.white,
                               ),
-                              itemBuilder: (BuildContext context){
-                                return contextMenu.map((String choice){
+                              itemBuilder: (context) {
+                                return categoryContextMenu.map((choice) {
                                   return PopupMenuItem<String>(
                                     value: choice,
                                     child: Text(choice),
                                   );
                                 }).toList();
                               },
-                            ),
+                            ) : SizedBox(),
                           ],
                         ),
                         SizedBox(height: 20.0),
                         Text(
                           'CATEGORY',
                           style: TextStyle(
-                            fontFamily: 'Ikaros',
                             color: Colors.white,
                             fontSize: 15.0,
                             fontWeight: FontWeight.w400,
@@ -149,7 +135,6 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                                 hintText: 'Enter category',
                               ),
                               onChanged: (value) {
-                                print(value);
                                 if (value.isNotEmpty) {
                                   removeError(error: 'Enter a category');
                                 }
@@ -194,8 +179,7 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                               valueListenable: cart.listenable(),
                               builder: (context, Box<GroceryItems> cart, _) {
                                 GroceryItems grocery = cart.get(groceryIndex);
-                                print('--------groceryItems');
-                                print(groceryItems);
+                                String category = grocery != null ? grocery.category : groceryItems.category;
                                 List<Item> items = grocery != null ? grocery.items : groceryItems.items;
 
                                 if (cart.values.length > 0) {
@@ -210,7 +194,7 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                                               MaterialPageRoute(
                                                 builder: (_) => ItemScreen(
                                                     groceryIndex: groceryIndex,
-                                                    category: grocery.category,
+                                                    category: category,
                                                     itemIndex: index,
                                                     item: item
                                                 ),
@@ -220,8 +204,7 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                                           child: ItemContent(
                                             number: "${index+1}",
                                             name: "${item.name}",
-                                            description: "${item.description}",
-                                            isDone: true,
+                                            description: "${item.description}"
                                           ),
                                         );
                                       }
@@ -251,16 +234,10 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) => ItemScreen(
-                                          groceryIndex: groceryIndex,
-                                          category: category,
-                                          itemIndex: null,
-                                          item: null
-                                      ),
-                                    ),
-                                  );
+                                  if (hasInvalidFormState()) {
+                                    return;
+                                  }
+                                  navigateToItemScreen(context, category);
                                 },
                                 child: Icon(
                                   Icons.add_circle_rounded,
@@ -279,29 +256,36 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
               BottomBar(
                 buttonText: 'Add New Item',
                 buttonAction: () {
-                  if (_formKey.currentState != null && !_formKey.currentState.validate()) {
+                  if (hasInvalidFormState()) {
                     return;
                   }
-
-                  print('+++++++++++++++groceryItems.category+++++++++++===');
-                  print(groceryItems.category);
-                  print(category);
-                  print('+++++++++++++++groceryItems.category+++++++++++===');
-
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => ItemScreen(
-                          groceryIndex: groceryIndex,
-                          category: groceryItems != null ? groceryItems.category : category,
-                          itemIndex: null,
-                          item: null
-                      ),
-                    ),
-                  );
+                  navigateToItemScreen(context, groceryItems != null ? groceryItems.category : category);
                 },
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  bool hasInvalidFormState() => _formKey.currentState != null && !_formKey.currentState.validate();
+
+  void _triggerContextMenuAction(String choice) {
+    if (choice == RemoveCategory) {
+      cart.getAt(groceryIndex).delete();
+      Navigator.pop(context);
+    }
+  }
+
+  void navigateToItemScreen(BuildContext context, String category) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ItemScreen(
+            groceryIndex: groceryIndex,
+            category: category,
+            itemIndex: null,
+            item: null
         ),
       ),
     );

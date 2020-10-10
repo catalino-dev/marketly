@@ -24,18 +24,18 @@ class CategoryGridList extends StatelessWidget {
         child: FutureBuilder<Box<GroceryItems>>(
             future: Hive.openBox(cartBoxName),
             builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return CircularProgressIndicator();
+              }
+
               return ValueListenableBuilder(
                   valueListenable: cart.listenable(),
                   builder: (context, Box<GroceryItems> cart, _) {
-                    if (snapshot.connectionState != ConnectionState.done) {
-                      return CircularProgressIndicator();
-                    }
-                    int categorySize = snapshot.data != null ? snapshot.data.length : 0;
                     return GridView.builder(
                       padding: EdgeInsets.all(30),
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
-                      itemCount: categorySize,
+                      itemCount: cart.values.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         mainAxisSpacing: 20.0,
@@ -43,7 +43,7 @@ class CategoryGridList extends StatelessWidget {
                         childAspectRatio: 0.75,
                       ),
                       itemBuilder: (context, index) {
-                        GroceryItems groceryItems = snapshot.data.get(index);
+                        GroceryItems groceryItems = cart.getAt(index);
                         int groceryIndex = index;
                         if (groceryItems == null) {
                           groceryIndex = null;

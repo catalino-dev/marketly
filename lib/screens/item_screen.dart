@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
+import 'package:marketly/config/constants.dart';
 import 'package:marketly/config/palette.dart';
 import 'package:marketly/models/item_model.dart';
 import 'package:marketly/models/models.dart';
@@ -30,6 +31,11 @@ class ItemScreen extends StatefulWidget {
 }
 
 class _ItemScreenState extends State<ItemScreen> {
+
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController nameController;
+  TextEditingController descriptionController;
+
   final String cartBoxName = 'cart';
   final int groceryIndex;
   final String category;
@@ -39,9 +45,6 @@ class _ItemScreenState extends State<ItemScreen> {
   Box<GroceryItems> cart;
   final List<String> errors = [];
   String name;
-
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
 
   _ItemScreenState({
     this.groceryIndex,
@@ -67,9 +70,9 @@ class _ItemScreenState extends State<ItemScreen> {
   @override
   void initState() {
     super.initState();
-    print(']======+++++++++===');
-    print(groceryIndex);
     cart = Hive.box<GroceryItems>(cartBoxName);
+    nameController = TextEditingController(text: item?.name);
+    descriptionController = TextEditingController(text: item?.description);
   }
 
   @override
@@ -86,11 +89,7 @@ class _ItemScreenState extends State<ItemScreen> {
               Stack(
                 children: <Widget>[
                   Container(
-                    padding: EdgeInsets.only(
-                      left: 30.0,
-                      right: 30.0,
-                      top: 60.0,
-                    ),
+                    padding: EdgeInsets.only(left: 30, right: 30, top: 60),
                     height: 275.0,
                     color: Palette.primary,
                     child: Column(
@@ -107,11 +106,22 @@ class _ItemScreenState extends State<ItemScreen> {
                                 color: Colors.white,
                               ),
                             ),
-                            Icon(
-                              Icons.shopping_cart,
-                              size: 30.0,
-                              color: Colors.white,
-                            ),
+                            isExistingItem ? PopupMenuButton<String>(
+                              onSelected: _triggerContextMenuAction,
+                              icon: Icon(
+                                Icons.more_vert,
+                                size: 30.0,
+                                color: Colors.white,
+                              ),
+                              itemBuilder: (BuildContext context){
+                                return itemContextMenu.map((String choice){
+                                  return PopupMenuItem<String>(
+                                    value: choice,
+                                    child: Text(choice),
+                                  );
+                                }).toList();
+                              },
+                            ) : SizedBox(),
                           ],
                         ),
                         SizedBox(height: 20.0),
@@ -139,61 +149,48 @@ class _ItemScreenState extends State<ItemScreen> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(30.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        child: TextFormField(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SizedBox(height: 20.0),
+                        TextFormField(
                           keyboardType: TextInputType.text,
                           onSaved: (newValue) => name = newValue,
                           onChanged: (value) {
-                            if (value.isNotEmpty) {
-                              removeError(error: "Input name");
+                            if (_formKey.currentState.validate()) {
+                              return;
                             }
-                            return null;
                           },
                           validator: (value) {
                             if (value.isEmpty) {
-                              addError(error: "Input name");
-                              return "";
+                              return 'Enter a name';
+                            } else if (value.isNotEmpty) {
+                              return null;
                             }
                             return null;
                           },
                           decoration: InputDecoration(
-                            labelText: "Name",
-                            hintText: isExistingItem ? item.name : 'Enter name',
+                            labelText: 'Name',
+                            hintText: 'Enter name',
                             floatingLabelBehavior: FloatingLabelBehavior.always,
                           ),
                           controller: nameController,
                         ),
-                      ),
-                      SizedBox(height: 30.0),
-                      Container(
-                        child: TextFormField(
+                        SizedBox(height: 30.0),
+                        TextFormField(
                           keyboardType: TextInputType.text,
                           onSaved: (newValue) => name = newValue,
-                          onChanged: (value) {
-                            if (value.isNotEmpty) {
-                              removeError(error: "Input description");
-                            }
-                            return null;
-                          },
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              addError(error: "Input description");
-                              return "";
-                            }
-                            return null;
-                          },
                           decoration: InputDecoration(
-                            labelText: "Description",
-                            hintText: isExistingItem ? item.description : 'Enter description',
+                            labelText: 'Description',
+                            hintText: 'Enter description',
                             floatingLabelBehavior: FloatingLabelBehavior.always,
                           ),
                           controller: descriptionController,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -203,17 +200,16 @@ class _ItemScreenState extends State<ItemScreen> {
                   final String name = nameController.text;
                   final String description = descriptionController.text;
 
+                  if (!_formKey.currentState.validate()) {
+                    return;
+                  }
+
                   Item item = Item(name: name, description: description);
-                  print('------**********---------');
-                  print(cart.values.isNotEmpty);
-                  print(groceryIndex);
 
                   GroceryItems activeCart;
                   if (groceryIndex != null) {
                     activeCart = cart.getAt(groceryIndex);
                     List<Item> items = activeCart.items;
-                    print(itemIndex);
-                    print('------***sdsdsdsdszzzz***---------');
                     if (itemIndex != null) {
                       items[itemIndex].name = name;
                       items[itemIndex].description = description;
@@ -234,7 +230,6 @@ class _ItemScreenState extends State<ItemScreen> {
                         builder: (_) => GroceryItemsScreen(groceryIndex: groceryIndex, groceryItems: activeCart),
                       ),
                     );
-                    // Navigator.pop(context);
                   }
                 },
               ),
@@ -243,5 +238,14 @@ class _ItemScreenState extends State<ItemScreen> {
         ),
       ),
     );
+  }
+
+  void _triggerContextMenuAction(String choice) {
+    if (choice == RemoveItem) {
+      GroceryItems groceryItems = cart.getAt(groceryIndex);
+      groceryItems.items.removeAt(itemIndex);
+      groceryItems.save();
+      Navigator.pop(context);
+    }
   }
 }
