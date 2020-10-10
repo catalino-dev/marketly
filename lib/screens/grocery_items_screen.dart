@@ -46,22 +46,13 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
   @override
   void initState() {
     super.initState();
-    Hive.openBox<GroceryItems>(cartBoxName);
     cart = Hive.box<GroceryItems>(cartBoxName);
-  }
-
-  Future<bool> _navigateToHomeScreen(BuildContext context) async {
-    Navigator.of(context).pop(
-      MaterialPageRoute(
-        builder: (_) => HomeScreen()
-      ),
-    );
-    return false;
   }
 
   @override
   Widget build(BuildContext context) {
 
+    print(groceryItems);
     bool isExistingCategory = groceryItems != null;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -189,7 +180,7 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                       padding: const EdgeInsets.all(30.0),
                       child: Text('Items', style: kTitleTextStyle),
                     ),
-                    isExistingCategory ?
+                    isExistingCategory && groceryItems.items.length > 0 ?
                     Expanded(
                       child: FutureBuilder<Box<GroceryItems>>(
                           future: Hive.openBox(cartBoxName),
@@ -197,55 +188,44 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
                             return ValueListenableBuilder(
                               valueListenable: cart.listenable(),
                               builder: (context, Box<GroceryItems> cart, _) {
-                                GroceryItems grocery = cart.get(groceryIndex);
+                                GroceryItems grocery = cart.getAt(groceryIndex);
                                 List<Item> items = grocery != null ? grocery.items : groceryItems.items;
-                                if (items != null && items.length > 0) {
-                                  return ListView.builder(
-                                      itemCount: items.length,
-                                      padding: EdgeInsets.symmetric(horizontal: 30),
-                                      itemBuilder: (context, index) {
-                                        Item item = items.toList()[index];
-                                        return GestureDetector(
-                                          onTap: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) => ItemDialog(
-                                                item: item,
-                                                title: 'Edit ' + item.name,
-                                                buttonText: 'Edit Item',
-                                                buttonAction: (Item updatedItem) {
-                                                  groceryItems.items[index] = updatedItem;
-                                                  groceryItems.save();
-                                                  Navigator.pop(context);
-                                                },
-                                                deleteAction: () {
-                                                  GroceryItems groceryItems = cart.getAt(groceryIndex);
-                                                  groceryItems.items.removeAt(index);
-                                                  groceryItems.save();
-                                                  Navigator.pop(context);
-                                                }
-                                              ),
-                                            );
-                                          },
-                                          child: ItemContent(
-                                            number: "${index+1}",
-                                            name: "${item.name}",
-                                            description: "${item.description}"
-                                          ),
-                                        );
-                                      }
-                                  );
-                                } else {
-                                  return EmptyState(
-                                      actionText: 'Looks like there\'s nothing here!\nAdd new item',
-                                      actionCommand: () {
-                                        if (hasInvalidFormState()) {
-                                          return;
-                                        }
-                                        _addNewItem(context);
-                                      }
-                                  );
-                                }
+
+                                return ListView.builder(
+                                    itemCount: items.length,
+                                    padding: EdgeInsets.symmetric(horizontal: 30),
+                                    itemBuilder: (context, index) {
+                                      Item item = items.toList()[index];
+                                      return GestureDetector(
+                                        onTap: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) => ItemDialog(
+                                              item: item,
+                                              title: 'Edit ' + item.name,
+                                              buttonText: 'Edit Item',
+                                              buttonAction: (Item updatedItem) {
+                                                groceryItems.items[index] = updatedItem;
+                                                groceryItems.save();
+                                                Navigator.pop(context);
+                                              },
+                                              deleteAction: () {
+                                                GroceryItems groceryItems = cart.getAt(groceryIndex);
+                                                groceryItems.items.removeAt(index);
+                                                groceryItems.save();
+                                                Navigator.pop(context);
+                                              }
+                                            ),
+                                          );
+                                        },
+                                        child: ItemContent(
+                                          number: "${index+1}",
+                                          name: "${item.name}",
+                                          description: "${item.description}"
+                                        ),
+                                      );
+                                    }
+                                );
                               },
                             );
                           }
@@ -297,14 +277,11 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
     print(groceryIndex);
     if (groceryIndex != null) {
       GroceryItems groceryItems = cart.getAt(groceryIndex);
-      if (newItem != null) {
-        groceryItems.items.add(newItem);
-      }
+      if (newItem != null) groceryItems.items.add(newItem);
       groceryItems.save();
-      Navigator.pop(context);
     } else {
       Iterable<GroceryItems> existingGroceryItemsList = cart.values.where((element) => element.category == category);
-
+      print(existingGroceryItemsList);
       if (existingGroceryItemsList.length == 0) {
         GroceryItems groceryItems = GroceryItems(category: category, items: []);
         if (newItem != null) {
@@ -312,14 +289,12 @@ class _GroceryItemsScreenState extends State<GroceryItemsScreen> {
         }
         cart.add(groceryItems);
         groceryItems.save();
-        Navigator.pop(context);
-        // _navigateToHomeScreen(context);
       } else {
         cart.add(existingGroceryItemsList.first);
         existingGroceryItemsList.first.save();
-        Navigator.pop(context);
       }
     }
+    Navigator.pop(context);
   }
 
   void _saveGroceryItems(categoryName) {

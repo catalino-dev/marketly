@@ -18,7 +18,7 @@ class CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: press,
+      onTap: () => press(groceryItems),
       child: Container(
         padding: EdgeInsets.all(20),
         height: 200,

@@ -30,7 +30,7 @@ class CategoryGridList extends StatelessWidget {
       );
     }
     return Container(
-        height: MediaQuery.of(context).size.height / 1.39,
+        height: MediaQuery.of(context).size.height / 1.35,
         child: FutureBuilder<Box<GroceryItems>>(
             future: Hive.openBox(cartBoxName),
             builder: (context, snapshot) {
@@ -42,7 +42,7 @@ class CategoryGridList extends StatelessWidget {
                     return GridView.builder(
                       padding: EdgeInsets.all(30),
                       scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
+                      // shrinkWrap: true,
                       itemCount: cart.values.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
@@ -51,19 +51,13 @@ class CategoryGridList extends StatelessWidget {
                         childAspectRatio: 0.75,
                       ),
                       itemBuilder: (context, index) {
-                        GroceryItems groceryItems = cart.getAt(index);
-                        int groceryIndex = index;
-                        if (groceryItems == null) {
-                          groceryIndex = null;
-                        }
-
                         return CategoryCard(
-                          groceryItems: groceryItems,
-                          index: groceryIndex,
-                          press: () {
+                          groceryItems: cart.getAt(index),
+                          index: index,
+                          press: (groceryItems) {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (_) => GroceryItemsScreen(groceryIndex: groceryIndex, groceryItems: groceryItems),
+                                builder: (_) => GroceryItemsScreen(groceryIndex: index, groceryItems: groceryItems),
                               ),
                             );
                           },

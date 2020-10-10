@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:hive/hive.dart';
 import 'package:marketly/models/item_model.dart';
 import 'package:meta/meta.dart';
@@ -17,4 +19,11 @@ class GroceryItems extends HiveObject {
     @required this.category,
     this.items
   });
+
+  @override
+  String toString() {
+    return jsonEncode({
+      'category': this.category
+    });
+  }
 }

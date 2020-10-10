@@ -82,7 +82,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 20.0),
             CategoryGridList(cart: cart),
           ],
         ),
